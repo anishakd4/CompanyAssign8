@@ -16,6 +16,7 @@ public class AsyncTaskLoadImage extends AsyncTask<String, String, Bitmap> {
     interface ImageLoadedCallback{
         void imageCallback(Bitmap bitmap, Integer position, ImageView imageView);
     }
+
     private final static String TAG = "AsyncTaskLoadImage";
     private ImageView imageView;
     Integer position;

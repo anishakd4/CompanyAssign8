@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.imageList.visibility = View.VISIBLE
         val adapter = RecyclerViewAdapter(imageList, this)
-        binding.imageList.layoutManager = GridLayoutManager(this, 2)
+        binding.imageList.layoutManager = LinearLayoutManager(this)
         binding.imageList.adapter = adapter
 
     }

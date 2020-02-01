@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_item.view.*
 
 
-class RecyclerViewAdapter(val imageList: ArrayList<String>, val activity: AppCompatActivity): RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder>(), AsyncTaskLoadImage.ImageLoadedCallback{
+class RecyclerViewAdapter(val imageList: ArrayList<String>, val activity: AppCompatActivity) : RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder>(),
+    AsyncTaskLoadImage.ImageLoadedCallback, ImageLoadingLibrary.ImageLoadedCallbackLibrary {
 
 
     val currentOpen = mutableSetOf<Int>();
@@ -20,7 +21,7 @@ class RecyclerViewAdapter(val imageList: ArrayList<String>, val activity: AppCom
     var placeholderImage = BitmapFactory.decodeResource(activity.getResources(), android.R.drawable.ic_menu_upload)
 
 
-    class RecyclerViewHolder(view: View): RecyclerView.ViewHolder(view){
+    class RecyclerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val imageView = view.imageview
         val textView = view.current_index
@@ -40,8 +41,8 @@ class RecyclerViewAdapter(val imageList: ArrayList<String>, val activity: AppCom
         return 40
     }
 
-    fun printSet(){
-        for(element in currentOpen){
+    fun printSet() {
+        for (element in currentOpen) {
             print("$element ")
         }
         println()
@@ -53,7 +54,9 @@ class RecyclerViewAdapter(val imageList: ArrayList<String>, val activity: AppCom
         Log.i("anisham", "onBindViewHolder " + position)
         printSet()
 
-        AsyncTaskLoadImage(holder.imageView, position, this, placeholderImage).execute(imageList.get(position % (imageList.size - 1)))
+        //AsyncTaskLoadImage(holder.imageView, position, this, placeholderImage).execute(imageList.get(position % (imageList.size - 1)))
+
+        ImageLoadingLibrary.with(activity).load(holder.imageView, imageList.get(position % (imageList.size - 1)), this, position)
     }
 
     override fun onViewRecycled(holder: RecyclerViewHolder) {
@@ -65,7 +68,14 @@ class RecyclerViewAdapter(val imageList: ArrayList<String>, val activity: AppCom
 
     override fun imageCallback(bitmap: Bitmap?, position: Int?, imageView: ImageView?) {
         Log.i("anisham", "imageCallback " + position)
-        if (position != null && bitmap != null && currentOpen.contains(position) && imageView != null){
+        if (position != null && bitmap != null && currentOpen.contains(position) && imageView != null) {
+            imageView.setImageBitmap(bitmap)
+        }
+    }
+
+    override fun imageCallbacking(bitmap: Bitmap?, position: Int?, imageView: ImageView?) {
+        Log.i("anisham", "imageCallback2= " + position)
+        if (position != null && bitmap != null && currentOpen.contains(position) && imageView != null) {
             imageView.setImageBitmap(bitmap)
         }
     }
