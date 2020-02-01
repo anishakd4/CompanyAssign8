@@ -1,39 +1,33 @@
 package com.developer.anishakd4.unacdemyassignment
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_item.view.*
 
-class RecyclerViewAdapter(val imageList: ArrayList<String>): RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder>(){
+
+class RecyclerViewAdapter(val imageList: ArrayList<String>, val activity: AppCompatActivity): RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder>(), AsyncTaskLoadImage.ImageLoadedCallback{
 
 
     val currentOpen = mutableSetOf<Int>();
 
-    class RecyclerViewHolder(view: View): RecyclerView.ViewHolder(view), AsyncTaskLoadImage.ImageLoadedCallback{
+    var placeholderImage = BitmapFactory.decodeResource(activity.getResources(), android.R.drawable.ic_menu_upload)
+
+
+    class RecyclerViewHolder(view: View): RecyclerView.ViewHolder(view){
 
         val imageView = view.imageview
-        lateinit var asynci: AsyncTaskLoadImage
+        val textView = view.current_index
 
         fun bind(url: String, current_position: Int) {
-            asynci = AsyncTaskLoadImage(imageView, current_position, this)
-            asynci.execute(url)
+            textView.text = current_position.toString()
         }
-
-        override fun imageCallback(bitmap: Bitmap?) {
-            Log.i("anisham", "imageCallback ")
-            if(asynci != null){
-                asynci.cancel(true)
-            }
-            if(bitmap != null){
-                imageView.setImageBitmap(bitmap)
-            }
-        }
-
 
     }
 
@@ -58,12 +52,22 @@ class RecyclerViewAdapter(val imageList: ArrayList<String>): RecyclerView.Adapte
         currentOpen.add(position)
         Log.i("anisham", "onBindViewHolder " + position)
         printSet()
+
+        AsyncTaskLoadImage(holder.imageView, position, this, placeholderImage).execute(imageList.get(position % (imageList.size - 1)))
     }
 
     override fun onViewRecycled(holder: RecyclerViewHolder) {
         super.onViewRecycled(holder)
         currentOpen.remove(holder.layoutPosition)
+//        holder.imageView.setImageDrawable(activity.getDrawable(android.R.drawable.ic_menu_upload))
         Log.i("anisham", "onViewRecycled " + holder.layoutPosition + " " + holder.adapterPosition + " " + holder.oldPosition)
+    }
+
+    override fun imageCallback(bitmap: Bitmap?, position: Int?, imageView: ImageView?) {
+        Log.i("anisham", "imageCallback " + position)
+        if (position != null && bitmap != null && currentOpen.contains(position) && imageView != null){
+            imageView.setImageBitmap(bitmap)
+        }
     }
 
 }

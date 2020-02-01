@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         imageList.add("https://gamedata.britishcouncil.org/sites/default/files/attachment/number-9_1.jpg")
 
         binding.imageList.visibility = View.VISIBLE
-        val adapter = RecyclerViewAdapter(imageList)
+        val adapter = RecyclerViewAdapter(imageList, this)
         binding.imageList.layoutManager = GridLayoutManager(this, 2)
         binding.imageList.adapter = adapter
 

@@ -2,6 +2,7 @@ package com.developer.anishakd4.unacdemyassignment;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
@@ -13,7 +14,7 @@ import java.net.URL;
 public class AsyncTaskLoadImage extends AsyncTask<String, String, Bitmap> {
 
     interface ImageLoadedCallback{
-        void imageCallback(Bitmap bitmap);
+        void imageCallback(Bitmap bitmap, Integer position, ImageView imageView);
     }
     private final static String TAG = "AsyncTaskLoadImage";
     private ImageView imageView;
@@ -21,10 +22,11 @@ public class AsyncTaskLoadImage extends AsyncTask<String, String, Bitmap> {
 
     ImageLoadedCallback imageLoadedCallback = null;
 
-    public AsyncTaskLoadImage(ImageView imageView, Integer position, ImageLoadedCallback imageLoadedCallback) {
+    public AsyncTaskLoadImage(ImageView imageView, Integer position, ImageLoadedCallback imageLoadedCallback, Bitmap placeholder) {
         this.imageView = imageView;
         this.position = position;
         this.imageLoadedCallback = imageLoadedCallback;
+        imageView.setImageBitmap(placeholder);
     }
 
     @Override
@@ -44,7 +46,7 @@ public class AsyncTaskLoadImage extends AsyncTask<String, String, Bitmap> {
         //imageView.setImageBitmap(bitmap);
 
         if (imageLoadedCallback != null){
-            imageLoadedCallback.imageCallback(bitmap);
+            imageLoadedCallback.imageCallback(bitmap, position, imageView);
         }
     }
 }
